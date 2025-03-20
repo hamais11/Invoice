@@ -42,6 +42,8 @@ interface PaymentTerms {
   dueDate: string;
   paymentTerms: string;
   notes: string;
+  discountType: string;
+  discountValue: number;
 }
 
 interface InvoiceData {
@@ -99,6 +101,8 @@ export default function Home() {
         .split("T")[0],
       paymentTerms: "net30",
       notes: "Please make payment by the due date.",
+      discountType: "none",
+      discountValue: 0,
     },
     invoiceNumber: `INV-${Math.floor(Math.random() * 10000)
       .toString()
@@ -113,7 +117,22 @@ export default function Home() {
   );
   const taxRate = 10; // 10%
   const taxAmount = subtotal * (taxRate / 100);
-  const total = subtotal + taxAmount;
+
+  // Calculate discount
+  let discountAmount = 0;
+  if (
+    invoiceData.paymentTerms.discountType === "percentage" &&
+    invoiceData.paymentTerms.discountValue > 0
+  ) {
+    discountAmount = subtotal * (invoiceData.paymentTerms.discountValue / 100);
+  } else if (
+    invoiceData.paymentTerms.discountType === "fixed" &&
+    invoiceData.paymentTerms.discountValue > 0
+  ) {
+    discountAmount = invoiceData.paymentTerms.discountValue;
+  }
+
+  const total = subtotal + taxAmount - discountAmount;
 
   // Map invoice data to preview format
   const previewData = {
@@ -143,6 +162,9 @@ export default function Home() {
       dueDate: invoiceData.paymentTerms.dueDate,
       notes: invoiceData.paymentTerms.notes,
     },
+    discountType: invoiceData.paymentTerms.discountType,
+    discountValue: invoiceData.paymentTerms.discountValue,
+    discountAmount,
     subtotal,
     taxRate,
     taxAmount,
@@ -155,17 +177,73 @@ export default function Home() {
 
   const handleSaveDraft = () => {
     console.log("Saving draft...", invoiceData);
-    // Implementation would save to local storage or database
+
+    // Calculate invoice totals
+    const subtotal = invoiceData.invoiceItems.reduce(
+      (sum, item) => sum + item.total,
+      0,
+    );
+    const taxRate = 10; // 10%
+    const taxAmount = subtotal * (taxRate / 100);
+
+    // Calculate discount
+    let discountAmount = 0;
+    if (
+      invoiceData.paymentTerms.discountType === "percentage" &&
+      invoiceData.paymentTerms.discountValue > 0
+    ) {
+      discountAmount =
+        subtotal * (invoiceData.paymentTerms.discountValue / 100);
+    } else if (
+      invoiceData.paymentTerms.discountType === "fixed" &&
+      invoiceData.paymentTerms.discountValue > 0
+    ) {
+      discountAmount = invoiceData.paymentTerms.discountValue;
+    }
+
+    const total = subtotal + taxAmount - discountAmount;
+
+    // Get existing invoices from localStorage
+    const storedInvoices = localStorage.getItem("invoices");
+    let invoices = storedInvoices ? JSON.parse(storedInvoices) : [];
+
+    // Create a new invoice object
+    const newInvoice = {
+      id: Math.random().toString(36).substr(2, 9),
+      invoiceNumber: invoiceData.invoiceNumber,
+      clientName: invoiceData.clientDetails.clientName,
+      invoiceDate: invoiceData.invoiceDate,
+      dueDate: invoiceData.paymentTerms.dueDate,
+      total: total,
+      status: "draft",
+    };
+
+    // Add to invoices array
+    invoices.push(newInvoice);
+
+    // Save to localStorage
+    localStorage.setItem("invoices", JSON.stringify(invoices));
+
+    // Show confirmation
+    alert("Invoice saved as draft!");
   };
 
   const handlePreview = () => {
     console.log("Previewing invoice...");
-    // Implementation would show a full-screen preview
+    // Open a dialog with a full-screen preview
+    window.open(
+      `/preview?data=${encodeURIComponent(JSON.stringify(previewData))}`,
+      "_blank",
+    );
   };
 
   const handleExportPdf = () => {
     console.log("Exporting to PDF...");
-    // Implementation would generate and download PDF
+    // Open the preview page with PDF download option
+    window.open(
+      `/preview?data=${encodeURIComponent(JSON.stringify(previewData))}&download=true`,
+      "_blank",
+    );
   };
 
   const handleEmailClient = () => {

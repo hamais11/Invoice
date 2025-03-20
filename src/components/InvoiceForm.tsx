@@ -45,6 +45,8 @@ interface PaymentTerms {
   dueDate: string;
   paymentTerms: string;
   notes: string;
+  discountType: string;
+  discountValue: number;
 }
 
 interface InvoiceData {
@@ -108,6 +110,8 @@ const InvoiceForm = ({ onUpdate, initialData = {} }: InvoiceFormProps) => {
         .split("T")[0],
       paymentTerms: "net30",
       notes: "Please make payment by the due date.",
+      discountType: "none",
+      discountValue: 0,
     },
     invoiceNumber: `INV-${Math.floor(Math.random() * 10000)
       .toString()
@@ -141,7 +145,7 @@ const InvoiceForm = ({ onUpdate, initialData = {} }: InvoiceFormProps) => {
     onUpdate?.(updatedData);
   };
 
-  const updatePaymentTerms = (field: string, value: string) => {
+  const updatePaymentTerms = (field: string, value: string | number) => {
     const updatedPaymentTerms = {
       ...invoiceData.paymentTerms,
       [field]: value,

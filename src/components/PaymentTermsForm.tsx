@@ -15,16 +15,20 @@ interface PaymentTermsFormProps {
   dueDate?: string;
   paymentTerms?: string;
   notes?: string;
-  onChange?: (field: string, value: string) => void;
+  discountType?: string;
+  discountValue?: number;
+  onChange?: (field: string, value: string | number) => void;
 }
 
 const PaymentTermsForm = ({
   dueDate = "",
   paymentTerms = "net30",
   notes = "",
+  discountType = "none",
+  discountValue = 0,
   onChange = () => {},
 }: PaymentTermsFormProps) => {
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | number) => {
     onChange(field, value);
   };
 
@@ -65,6 +69,43 @@ const PaymentTermsForm = ({
             />
             <CalendarIcon className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
           </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="discount-type">Discount Type</Label>
+          <Select
+            value={discountType}
+            onValueChange={(value) => handleChange("discountType", value)}
+          >
+            <SelectTrigger id="discount-type">
+              <SelectValue placeholder="Select discount type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">No Discount</SelectItem>
+              <SelectItem value="percentage">Percentage (%)</SelectItem>
+              <SelectItem value="fixed">Fixed Amount</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="discount-value">
+            {discountType === "percentage" ? "Discount (%)" : "Discount Amount"}
+          </Label>
+          <Input
+            id="discount-value"
+            type="number"
+            min="0"
+            max={discountType === "percentage" ? "100" : undefined}
+            value={discountValue}
+            onChange={(e) =>
+              handleChange("discountValue", parseFloat(e.target.value) || 0)
+            }
+            disabled={discountType === "none"}
+            className="w-full"
+          />
         </div>
       </div>
 

@@ -54,6 +54,9 @@ interface InvoicePreviewProps {
   subtotal?: number;
   taxRate?: number;
   taxAmount?: number;
+  discountType?: string;
+  discountValue?: number;
+  discountAmount?: number;
   total?: number;
 }
 
@@ -110,6 +113,9 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
   subtotal = 2100,
   taxRate = 10,
   taxAmount = 210,
+  discountType = "none",
+  discountValue = 0,
+  discountAmount = 0,
   total = 2310,
 }) => {
   return (
@@ -208,6 +214,18 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
                 <span className="text-sm">Tax ({taxRate}%):</span>
                 <span className="font-medium">${taxAmount.toFixed(2)}</span>
               </div>
+              {discountType !== "none" && discountAmount > 0 && (
+                <div className="flex justify-between py-2 text-green-600">
+                  <span className="text-sm">
+                    Discount{" "}
+                    {discountType === "percentage" ? `(${discountValue}%)` : ""}
+                    :
+                  </span>
+                  <span className="font-medium">
+                    -${discountAmount.toFixed(2)}
+                  </span>
+                </div>
+              )}
               <Separator className="my-2" />
               <div className="flex justify-between py-2">
                 <span className="font-semibold">Total:</span>

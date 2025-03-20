@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { Dialog, DialogTrigger, DialogContent } from "./ui/dialog";
-import { Save, FileDown, Mail, Eye } from "lucide-react";
+import { Save, FileDown, Mail, Eye, List } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface ActionButtonsProps {
   onSaveDraft?: () => void;
@@ -17,6 +18,7 @@ const ActionButtons = ({
   onEmailClient = () => console.log("Email client clicked"),
 }: ActionButtonsProps) => {
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="w-full bg-background p-4 border-t flex justify-between items-center gap-4">
@@ -36,6 +38,14 @@ const ActionButtons = ({
         >
           <Eye className="h-4 w-4" />
           Preview
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => router.push("/invoices")}
+          className="flex items-center gap-2"
+        >
+          <List className="h-4 w-4" />
+          All Invoices
         </Button>
       </div>
 
