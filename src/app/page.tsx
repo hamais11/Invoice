@@ -130,6 +130,8 @@ export default function Home() {
     invoiceData.paymentTerms.discountValue > 0
   ) {
     discountAmount = invoiceData.paymentTerms.discountValue;
+  } else if (invoiceData.paymentTerms.discountType === "taxi") {
+    discountAmount = subtotal * 0.1; // Taxi discount is fixed at 10%
   }
 
   const total = subtotal + taxAmount - discountAmount;

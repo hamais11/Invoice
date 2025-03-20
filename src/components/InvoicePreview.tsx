@@ -219,7 +219,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
                   <span className="text-sm">
                     Discount{" "}
                     {discountType === "percentage" ? `(${discountValue}%)` : ""}
-                    :
+                    {discountType === "taxi" ? "(Taxi 10%)" : ""}:
                   </span>
                   <span className="font-medium">
                     -${discountAmount.toFixed(2)}

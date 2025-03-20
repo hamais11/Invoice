@@ -27,6 +27,18 @@ const PreviewPage = () => {
         if (shouldDownload) {
           setTimeout(() => {
             toPDF();
+            // Force download by creating a direct download link as fallback
+            const element = document.createElement("a");
+            element.setAttribute(
+              "href",
+              "data:application/pdf;charset=utf-8," +
+                encodeURIComponent(JSON.stringify(parsedData)),
+            );
+            element.setAttribute("download", "invoice.pdf");
+            element.style.display = "none";
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
           }, 1000); // Small delay to ensure rendering is complete
         }
       } catch (error) {

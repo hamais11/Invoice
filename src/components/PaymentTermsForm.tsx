@@ -86,6 +86,7 @@ const PaymentTermsForm = ({
               <SelectItem value="none">No Discount</SelectItem>
               <SelectItem value="percentage">Percentage (%)</SelectItem>
               <SelectItem value="fixed">Fixed Amount</SelectItem>
+              <SelectItem value="taxi">Taxi (10%)</SelectItem>
             </SelectContent>
           </Select>
         </div>
